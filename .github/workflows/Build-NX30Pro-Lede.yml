@@ -20,6 +20,9 @@ on:
         default: 'false'
   watch:
     types: [started]
+  push:
+    tags:
+      - 'NX30pro'
     
 env:
   REPO_URL: https://github.com/coolsnowwolf/lede
