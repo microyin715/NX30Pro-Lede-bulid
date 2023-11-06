@@ -300,7 +300,7 @@ jobs:
 
     - name: 上传固件
       uses: actions/upload-artifact@main
-      if: steps.organize.outputs.status == 'success' && !cancelled()
+      if: steps.tag.outputs.release_tag == 'success' && !cancelled()
       with:
         name: OpenWrt_firmware${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
         path: ${{ env.FIRMWARE }}
@@ -308,12 +308,12 @@ jobs:
     - name: 发布OpenWrt固件到Realeases
       id: release
       uses: ncipollo/release-action@v1
-      if: steps.organize.outputs.status == 'success' && env.UPLOAD_RELEASE == 'true' && !cancelled()
+      if: steps.tag.outputs.release_tag == 'success' && env.UPLOAD_RELEASE == 'true' && !cancelled()
       with:
         name: R${{ env.VER }} for NX30Pro
         allowUpdates: true
         removeArtifacts: true
-        tag: ${{ steps.organize.outputs.release_tag }}
+        tag: ${{ steps.tag.outputs.release_tag }}
         commit: main
         token: ${{ secrets.GITHUB_TOKEN }}
         artifacts: ${{ env.FIRMWARE }}/*
