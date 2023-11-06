@@ -290,7 +290,6 @@ jobs:
         rm -rf packages
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         echo "status=success" >>$GITHUB_OUTPUT
-        echo "::status name=release_tag::$(date +"%Y.%m.%d-%H%M")"
 
     - name: 计算固件MD5
       run: |
@@ -300,7 +299,7 @@ jobs:
 
     - name: 上传固件
       uses: actions/upload-artifact@main
-      if: steps.tag.outputs.release_tag == 'success' && !cancelled()
+      if: steps.tag.outputs.status == 'success' && !cancelled()
       with:
         name: OpenWrt_firmware${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
         path: ${{ env.FIRMWARE }}
@@ -308,12 +307,12 @@ jobs:
     - name: 发布OpenWrt固件到Realeases
       id: release
       uses: ncipollo/release-action@v1
-      if: steps.tag.outputs.release_tag == 'success' && env.UPLOAD_RELEASE == 'true' && !cancelled()
+      if: steps.tag.outputs.status == 'success' && env.UPLOAD_RELEASE == 'true' && !cancelled()
       with:
         name: R${{ env.VER }} for NX30Pro
         allowUpdates: true
         removeArtifacts: true
-        tag: ${{ steps.tag.outputs.release_tag }}
+        tag: ${{ steps.tag.outputs.status }}
         commit: main
         token: ${{ secrets.GITHUB_TOKEN }}
         artifacts: ${{ env.FIRMWARE }}/*
@@ -329,7 +328,7 @@ jobs:
           > ${{ env.MD5 }}
 
     - name: 删除工作流
-      uses: GitRML/delete-workflow-runs@main
+      uses: microyin715/delete-workflow-runs@main
       with:
         retain_days: 1
         keep_minimum_runs: 3
