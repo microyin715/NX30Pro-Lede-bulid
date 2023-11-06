@@ -315,7 +315,7 @@ jobs:
         removeArtifacts: true
         tag: ${{ steps.organize.outputs.release_tag }}
         commit: main
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.NX30PRO }}
         artifacts: ${{ env.FIRMWARE }}/*
         body: |
           - 版本号：${{ env.VER }}
