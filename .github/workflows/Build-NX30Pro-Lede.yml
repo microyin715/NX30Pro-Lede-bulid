@@ -299,20 +299,28 @@ jobs:
 
     - name: 上传固件
       uses: actions/upload-artifact@main
-      if: steps.tag.outputs.status == 'success' && !cancelled()
+      if: steps.organize.outputs.status == 'success' && !cancelled()
       with:
         name: OpenWrt_firmware${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
         path: ${{ env.FIRMWARE }}
 
+    - name: 生成Release标识
+      id: tag
+      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+      run: |
+        echo "::set-output name=release_tag::XiaoMi-AX3600-LEDE-$(date +"%Y.%m.%d-%H%M")"
+        touch release.txt
+        echo "::set-output name=status::success"
+
     - name: 发布OpenWrt固件到Realeases
-      id: release
-      uses: ncipollo/release-action@v1
+      id: tag
+      uses: softprops/action-gh-release@v1
       if: steps.tag.outputs.status == 'success' && env.UPLOAD_RELEASE == 'true' && !cancelled()
       with:
-        name: R${{ env.VER }} for NX30Pro
+        name: ${{ env.VER }} for NX30Pro
         allowUpdates: true
         removeArtifacts: true
-        tag: ${{ steps.tag.outputs.status }}
+        tag_name: ${{ steps.tag.outputs.status }}
         commit: main
         token: ${{ secrets.GITHUB_TOKEN }}
         artifacts: ${{ env.FIRMWARE }}/*
@@ -328,7 +336,7 @@ jobs:
           > ${{ env.MD5 }}
 
     - name: 删除工作流
-      uses: microyin715/delete-workflow-runs@main
+      uses: GitRML/delete-workflow-runs@main
       with:
         retain_days: 1
         keep_minimum_runs: 3
