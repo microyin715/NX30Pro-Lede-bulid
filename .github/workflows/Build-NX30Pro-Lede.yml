@@ -308,7 +308,7 @@ jobs:
       id: tag
       if: env.UPLOAD_RELEASE == 'true' && !cancelled()
       run: |
-        echo "::set-output name=release_tag::XiaoMi-AX3600-LEDE-$(date +"%Y.%m.%d-%H%M")"
+        echo "::set-output name=release_tag::H3C-NX30Pro-LEDE-$(date +"%Y.%m.%d-%H%M")"
         touch release.txt
         echo "::set-output name=status::success"
 
